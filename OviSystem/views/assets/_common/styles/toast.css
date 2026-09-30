@@ -1,0 +1,10 @@
+.toast-host { position: fixed; top: 16px; right: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; max-width: min(380px, calc(100vw - 32px)); }
+.toast { padding: 12px 16px; border-radius: 8px; color: #fff; font-size: .95rem; box-shadow: 0 6px 20px rgba(0,0,0,.2); cursor: pointer; }
+.toast--success { background: #16a34a; }
+.toast--warning { background: #facc15; color: #422006; }
+.toast--error   { background: #dc2626; }
+
+.estado-msg { padding: 24px; text-align: center; }
+.estado-msg--erro { color: #dc2626; }
+.estado-msg--carregando::before { content: ""; display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: -3px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: estado-giro .7s linear infinite; }
+@keyframes estado-giro { to { transform: rotate(360deg); } }
