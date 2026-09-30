@@ -5,18 +5,22 @@ export default class Treatments{
     #type;
     #startDate;
     #endDate;
-    #aplicator;
+    #medications;
+    #doseFrequency;
+    #veterinarian;
     #observation;
     #active;
 
-    constructor({ id = null , sheepsId = null, name = '', aplicationDate = '', dose = '', aplicator = '' , observation = '', active = 1} = {})
+    constructor({ id = null , sheepsId = null, type = '', startDate = '', endDate = '', medications = '' , doseFrequency = '', observation = '', active = 1} = {})
     {
         this.id = id;
         this.sheepsId = sheepsId;
-        this.name = name;
-        this.aplicationDate = aplicationDate;
-        this.dose = dose;
-        this.aplicator = aplicator;
+        this.type = type;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.medications = medications;
+        this.doseFrequency = doseFrequency;
+        this.veterinarian = veterinarian;
         this.observation = observation;
 
     }
@@ -39,48 +43,48 @@ export default class Treatments{
         this.#sheepsId = value === null ? null : Number(value)
     }
 
-    get name() {
-        return this.#name;
+    get type() {
+        return this.#type;
     }
 
-    set name(value) {
+    set type(value) {
         if (typeof value !== "string" || value.trim() === "") {
             throw new TypeError("O nome é obrigatório");
         }
-        this.#name = value.trim();
+        this.#type = value.trim();
     }
 
-    get aplicationDate() {
-        return this.#aplicationDate;
+    get startDate() {
+        return this.#startDate;
     }
 
-    set aplicationDate(value) {
+    set startDate(value) {
         if (typeof value !== "string" || value.trim() === "") {
             throw new TypeError("A data de aplicação é obrigatória");
         }
-        this.#aplicationDate = value.trim();
+        this.#startDate = value.trim();
     }
 
-    get dose() {
-        return this.#dose;
+    get endDate() {
+         return this.#endDate;
     }
 
-    set dose(value) {
+    set endDate(value) {
         if (typeof value !== "string" || value.trim() === "") {
             throw new TypeError("A dosagem é obrigatória");
         }
-        this.#dose = value.trim();
+        this.#endDate = value.trim();
     }
 
-    get aplicator() {
-        return this.#aplicator;
+    get medications() {
+        return this.#medications;
     }
 
-    set aplicator(value) {
+    set medications(value) {
         if (typeof value !== "string" || value.trim() === "") {
             throw new TypeError("O nome do aplicador é obrigatório");
         }
-        this.#aplicator = value.trim();
+        this.#medications = value.trim();
     }
 
     get observation() {
@@ -93,6 +97,6 @@ export default class Treatments{
 
 
     toJSON() {
-        return { id: this.id, sheepsId: this.sheepsId, name: this.name, aplicationDate: this.aplicationDate, dose: this.dose , aplicator: this.aplicator, observation: this.observation };
+        return { id: this.id, sheepsId: this.sheepsId, type: this.type, startDate: this.startDate, endDate: this.endDate , medications: this.medications, observation: this.observation };
     }
 }
