@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cadastrar — OviSystem</title>
+  <link rel="stylesheet" href="assets/_common/styles/reset.css" />
+  <link rel="stylesheet" href="assets/_common/styles/base.css" />
+  <link rel="stylesheet" href="assets/_common/styles/auth.css" />
+  <script type="module" src="assets/_common/classes/Users.js"></script>
+  <script type="module" src="assets/app/scripts/Cadastro.js"></script>
+</head>
+<body class="auth-body">
+  <header class="topbar">
+    <a href="../index.html" class="brand">
+      <span class="brand__mark">🐑</span>
+      <span class="brand__name">OviSystem</span>
+    </a>
+    <nav class="topbar__nav">
+      <a href="login.html" class="btn btn--ghost">Entrar</a>
+    </nav>
+  </header>
+  <main class="auth">
+    <section class="auth__card">
+      <h1>Criar conta</h1>
+      <p class="auth__sub">É rápido. Comece a gerenciar seu rebanho hoje.</p>
+      <form class="form">
+        <label class="field">
+          <span>Nome completo</span>
+          <input type="text" name="name" placeholder="Ex.: João da Silva" required />
+        </label>
+        <label class="field">
+          <span>E-mail</span>
+          <input type="email" name="email" placeholder="seu@email.com" required />
+        </label>
+        <label class="field">
+          <span>Propriedade / Fazenda</span>
+          <input type="text" name="farm" placeholder="Ex.: Fazenda Boa Vista" />
+        </label>
+        <div class="form__grid">
+          <label class="field">
+            <span>Senha</span>
+            <input type="password" name="password" required />
+          </label>
+          <label class="field">
+            <span>Confirmar senha</span>
+            <input type="password" name="password2" required />
+          </label>
+        </div>
+        <label class="checkbox">
+          <input type="checkbox" required /> Aceito os termos de uso
+        </label>
+        <button type="submit" class="btn btn--primary btn--lg btn--block">Criar conta</button>
+      </form>
+      <p class="auth__footer">
+        Já tem conta? <a href="login.html" class="link">Entrar</a>
+      </p>
+    </section>
+  </main>
+</body>
+</html>

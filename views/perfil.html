@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meu perfil — OviSystem</title>
+  <link rel="stylesheet" href="assets/_common/styles/reset.css" />
+  <link rel="stylesheet" href="assets/_common/styles/base.css" />
+  <link rel="stylesheet" href="assets/_common/styles/perfil.css" />
+</head>
+<body class="app-body">
+  <header class="topbar topbar--app">
+    <a href="../index.html" class="brand">
+      <span class="brand__mark">🐑</span>
+      <span class="brand__name">OviSystem</span>
+    </a>
+    <nav class="topbar__nav" aria-label="Navegação principal">
+      <a href="lotes.html" class="navlink">Lotes</a>
+      <a href="admin-dashboard.html" class="navlink">Admin</a>
+      <a href="login.html" class="btn btn--ghost">Sair</a>
+    </nav>
+  </header>
+
+  <main class="app perfil">
+    <section class="page-header perfil__header">
+      <div>
+        <p class="perfil__eyebrow">CONTA</p>
+        <h1>Meu perfil</h1>
+        <p class="muted">Gerencie seus dados pessoais, sua fazenda e as informações de acesso.</p>
+      </div>
+    </section>
+
+    <div class="perfil__layout">
+      <aside class="perfil-resumo">
+        <div class="perfil-resumo__avatar" aria-hidden="true">👨🏻‍🌾</div>
+        <h2>Seu perfil</h2>
+        <p class="muted">Responsável pela propriedade</p>
+        <div class="perfil-resumo__fazenda">
+          <span aria-hidden="true">🌾</span>
+          <div>
+            <strong>Dados da fazenda</strong>
+            <small>Identifique sua propriedade no OviSystem.</small>
+          </div>
+        </div>
+        <p class="perfil-resumo__nota">Mantenha seus dados atualizados para facilitar a gestão do rebanho.</p>
+      </aside>
+
+      <div class="perfil__forms">
+        <!-- FORMULÁRIO 1: dados pessoais e fazenda -->
+        <section class="perfil-card" aria-labelledby="dados-titulo">
+          <div class="perfil-card__header">
+            <div class="perfil-card__icon" aria-hidden="true">👤</div>
+            <div>
+              <h2 id="dados-titulo">Dados pessoais e da fazenda</h2>
+              <p class="muted">Atualize seu nome, e-mail e o nome da propriedade.</p>
+            </div>
+          </div>
+
+          <form class="form perfil-form" action="#" method="post" enctype="multipart/form-data">
+            <div class="form__grid">
+              <label class="field">
+                <span>Nome completo</span>
+                <input type="text" name="nome" autocomplete="name" placeholder="Ex.: Maria da Silva" required />
+              </label>
+              <label class="field">
+                <span>E-mail</span>
+                <input type="email" name="email" autocomplete="email" placeholder="seu@email.com" required />
+              </label>
+            </div>
+            <label class="field">
+              <span>Nome da fazenda</span>
+              <input type="text" name="nome_fazenda" placeholder="Ex.: Fazenda Boa Esperança" required />
+            </label>
+            <div class="perfil-form__actions">
+              <button type="submit" class="btn btn--primary">Salvar dados</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- FORMULÁRIO 2: alteração de senha -->
+        <section class="perfil-card" aria-labelledby="senha-titulo">
+          <div class="perfil-card__header">
+            <div class="perfil-card__icon" aria-hidden="true">🔒</div>
+            <div>
+              <h2 id="senha-titulo">Alterar senha</h2>
+              <p class="muted">Use uma senha forte para proteger sua conta.</p>
+            </div>
+          </div>
+
+          <form class="form perfil-form" action="#" method="post" enctype="multipart/form-data">
+            <label class="field">
+              <span>Senha atual</span>
+              <input type="password" name="senha_atual" autocomplete="current-password" placeholder="Digite sua senha atual" required />
+            </label>
+            <div class="form__grid">
+              <label class="field">
+                <span>Nova senha</span>
+                <input type="password" name="nova_senha" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres" required />
+              </label>
+              <label class="field">
+                <span>Confirmar nova senha</span>
+                <input type="password" name="confirmar_senha" autocomplete="new-password" minlength="8" placeholder="Repita a nova senha" required />
+              </label>
+            </div>
+            <p class="perfil-form__hint">Preencha os três campos para alterar sua senha. Recomendamos combinar letras, números e símbolos.</p>
+            <div class="perfil-form__actions">
+              <button type="submit" class="btn btn--primary">Atualizar senha</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- FORMULÁRIO 3: upload de foto de perfil -->
+        <section class="perfil-card" aria-labelledby="foto-titulo">
+          <div class="perfil-card__header">
+            <div class="perfil-card__icon" aria-hidden="true">🖼️</div>
+            <div>
+              <h2 id="foto-titulo">Foto do perfil</h2>
+              <p class="muted">Escolha uma imagem para identificar sua conta.</p>
+            </div>
+          </div>
+
+          <form class="form perfil-form" action="#" method="post" enctype="multipart/form-data">
+            <div class="perfil-foto">
+              <div class="perfil-foto__preview" aria-hidden="true">👨🏻‍🌾</div>
+              <div class="perfil-foto__texto">
+                <strong>Imagem de perfil</strong>
+                <p class="muted">Formatos aceitos: JPG, PNG ou WEBP. Tamanho máximo recomendado: 5 MB.</p>
+              </div>
+            </div>
+            <label class="field">
+              <span>Selecionar imagem</span>
+              <input class="perfil-file" type="file" name="foto_perfil" accept="image/jpeg,image/png,image/webp" />
+            </label>
+            <p class="perfil-form__hint">Selecione uma imagem nos formatos indicados.</p>
+            <div class="perfil-form__actions">
+              <button type="submit" class="btn btn--primary">Atualizar foto</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

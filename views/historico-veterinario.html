@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Histórico Veterinário — OviSystem</title>
+  <link rel="stylesheet" href="assets/_common/styles/reset.css" />
+  <link rel="stylesheet" href="assets/_common/styles/base.css" />
+  <link rel="stylesheet" href="assets/_common/styles/historico-veterinario.css" />
+</head>
+<body class="app-body">
+  <header class="topbar topbar--app">
+    <a href="../index.html" class="brand">
+      <span class="brand__mark">🐑</span>
+      <span class="brand__name">OviSystem</span>
+    </a>
+    <nav class="topbar__nav">
+      <a href="lotes.html" class="navlink">Lotes</a>
+      <a href="admin-dashboard.html" class="navlink">Admin</a>
+      <a href="login.html" class="btn btn--ghost">Sair</a>
+    </nav>
+  </header>
+
+  <main class="app">
+
+    <!-- Cabeçalho da ovelha (preenchido pelo JS se vier do fluxo normal) -->
+    <section class="hv-header" id="hv-header-ovelha" style="display:none">
+      <div class="hv-header__back">
+        <a href="lotes.html" class="btn btn--ghost btn--sm">← Voltar</a>
+      </div>
+      <div class="hv-hero">
+        <div class="hv-hero__avatar" id="hv-avatar">🐑</div>
+        <div>
+          <h1 class="hv-hero__codigo" id="hv-codigo">—</h1>
+          <p class="hv-hero__sub" id="hv-sub">—</p>
+        </div>
+      </div>
+      <div class="hv-ficha" id="hv-ficha"></div>
+    </section>
+
+    <!-- Título fixo quando não há ovelha identificada -->
+    <section class="hv-header" id="hv-header-generico">
+      <div class="hv-header__back">
+        <a href="lotes.html" class="btn btn--ghost btn--sm">← Voltar</a>
+      </div>
+      <div class="hv-hero">
+        <div class="hv-hero__avatar">🐑</div>
+        <div>
+          <h1 class="hv-hero__codigo">Histórico Veterinário</h1>
+          <p class="hv-hero__sub">Registros de saúde do animal</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Abas -->
+    <div class="hv-tabs" role="tablist">
+      <button class="hv-tab active" role="tab" data-tab="vacinas">
+        <span class="hv-tab__icon">💉</span>
+        <span class="hv-tab__label">Vacinação</span>
+        <span class="hv-tab__count" id="count-vacinas">0</span>
+      </button>
+      <button class="hv-tab" role="tab" data-tab="feridas">
+        <span class="hv-tab__icon">🩹</span>
+        <span class="hv-tab__label">Feridas / Lesões</span>
+        <span class="hv-tab__count" id="count-feridas">0</span>
+      </button>
+      <button class="hv-tab" role="tab" data-tab="doencas">
+        <span class="hv-tab__icon">🦠</span>
+        <span class="hv-tab__label">Doenças</span>
+        <span class="hv-tab__count" id="count-doencas">0</span>
+      </button>
+      <button class="hv-tab" role="tab" data-tab="vermifugacoes">
+        <span class="hv-tab__icon">🧴</span>
+        <span class="hv-tab__label">Vermifugação</span>
+        <span class="hv-tab__count" id="count-vermifugacoes">0</span>
+      </button>
+      <button class="hv-tab" role="tab" data-tab="tratamentos">
+        <span class="hv-tab__icon">💊</span>
+        <span class="hv-tab__label">Tratamentos</span>
+        <span class="hv-tab__count" id="count-tratamentos">0</span>
+      </button>
+    </div>
+
+    <!-- ══ PAINEL: VACINAÇÃO ══════════════════════════════════════════════════ -->
+    <div class="hv-panel active" id="tab-vacinas">
+      <div class="hv-panel-header">
+        <h2>💉 Histórico de vacinação</h2>
+      </div>
+      <div id="lista-vacinas">
+        <div class="hv-vazio">
+          <div class="hv-vazio__icon">💉</div>
+          <p>Nenhuma vacinação registrada ainda.</p>
+        </div>
+      </div>
+      <div class="hv-form-section">
+        <p class="hv-form-section__title">+ Registrar vacinação / medicamento</p>
+        <div class="hv-form">
+          <label class="field">
+            <span>Vacina / Medicamento *</span>
+            <input id="fVacina-vacinas" placeholder="Ex.: Clostridiose, Aftosa…" />
+          </label>
+          <div class="form__grid">
+            <label class="field">
+              <span>Data de aplicação *</span>
+              <input id="fData-vacinas" type="date" />
+            </label>
+            <label class="field">
+              <span>Dose</span>
+              <input id="fDose-vacinas" placeholder="Ex.: 2 ml" />
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Aplicador</span>
+              <input id="fAplicador-vacinas" placeholder="Ex.: Dr. João" />
+            </label>
+            <label class="field">
+              <span>Observações</span>
+              <input id="fObs-vacinas" placeholder="Opcional" />
+            </label>
+          </div>
+          <div class="hv-form__actions">
+            <button class="btn btn--primary" id="btn-registrar-vacinas">+ Registrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAINEL: FERIDAS / LESÕES ═══════════════════════════════════════════ -->
+    <div class="hv-panel" id="tab-feridas">
+      <div class="hv-panel-header">
+        <h2>🩹 Feridas e Lesões</h2>
+      </div>
+      <div id="lista-feridas">
+        <div class="hv-vazio">
+          <div class="hv-vazio__icon">🩹</div>
+          <p>Nenhuma ferida ou lesão registrada.</p>
+        </div>
+      </div>
+      <div class="hv-form-section">
+        <p class="hv-form-section__title">+ Registrar ferida / lesão</p>
+        <div class="hv-form">
+          <div class="form__grid">
+            <label class="field">
+              <span>Descrição *</span>
+              <input id="fDesc-feridas" placeholder="Ex.: Corte na pata dianteira" />
+            </label>
+            <label class="field">
+              <span>Local no corpo</span>
+              <input id="fLocal-feridas" placeholder="Ex.: Pata dianteira esquerda" />
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Data *</span>
+              <input id="fData-feridas" type="date" />
+            </label>
+            <label class="field">
+              <span>Gravidade</span>
+              <select id="fGravidade-feridas">
+                <option value="">Selecionar…</option>
+                <option value="leve">Leve</option>
+                <option value="moderado">Moderada</option>
+                <option value="grave">Grave</option>
+              </select>
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Situação</span>
+              <select id="fSituacao-feridas">
+                <option value="">Selecionar…</option>
+                <option value="aberta">Aberta</option>
+                <option value="cicatrizando">Cicatrizando</option>
+                <option value="curada">Curada</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Tratamento aplicado</span>
+              <input id="fTratamento-feridas" placeholder="Ex.: Curativo, antibiótico…" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Observações</span>
+            <input id="fObs-feridas" placeholder="Opcional" />
+          </label>
+          <div class="hv-form__actions">
+            <button class="btn btn--primary" id="btn-registrar-feridas">+ Registrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAINEL: DOENÇAS ════════════════════════════════════════════════════ -->
+    <div class="hv-panel" id="tab-doencas">
+      <div class="hv-panel-header">
+        <h2>🦠 Doenças</h2>
+      </div>
+      <div id="lista-doencas">
+        <div class="hv-vazio">
+          <div class="hv-vazio__icon">🦠</div>
+          <p>Nenhuma doença registrada.</p>
+        </div>
+      </div>
+      <div class="hv-form-section">
+        <p class="hv-form-section__title">+ Registrar doença</p>
+        <div class="hv-form">
+          <label class="field">
+            <span>Doença / Diagnóstico *</span>
+            <input id="fDoenca-doencas" placeholder="Ex.: Pododermatite, Pneumonia…" />
+          </label>
+          <div class="form__grid">
+            <label class="field">
+              <span>Data de início *</span>
+              <input id="fDataInicio-doencas" type="date" />
+            </label>
+            <label class="field">
+              <span>Data de encerramento</span>
+              <input id="fDataFim-doencas" type="date" />
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Situação</span>
+              <select id="fSituacao-doencas">
+                <option value="">Selecionar…</option>
+                <option value="ativa">Ativa</option>
+                <option value="recuperado">Recuperado</option>
+                <option value="cronico">Crônica</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Veterinário responsável</span>
+              <input id="fVet-doencas" placeholder="Ex.: Dra. Ana Lima" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Tratamento prescrito</span>
+            <input id="fTratamento-doencas" placeholder="Ex.: Antibioticoterapia, isolamento…" />
+          </label>
+          <label class="field">
+            <span>Observações</span>
+            <input id="fObs-doencas" placeholder="Opcional" />
+          </label>
+          <div class="hv-form__actions">
+            <button class="btn btn--primary" id="btn-registrar-doencas">+ Registrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAINEL: VERMIFUGAÇÃO ═══════════════════════════════════════════════ -->
+    <div class="hv-panel" id="tab-vermifugacoes">
+      <div class="hv-panel-header">
+        <h2>🧴 Vermifugação</h2>
+      </div>
+      <div id="lista-vermifugacoes">
+        <div class="hv-vazio">
+          <div class="hv-vazio__icon">🧴</div>
+          <p>Nenhuma vermifugação registrada.</p>
+        </div>
+      </div>
+      <div class="hv-form-section">
+        <p class="hv-form-section__title">+ Registrar vermifugação</p>
+        <div class="hv-form">
+          <label class="field">
+            <span>Vermífugo / Produto *</span>
+            <input id="fProduto-vermifugacoes" placeholder="Ex.: Ivermectina, Albendazol…" />
+          </label>
+          <div class="form__grid">
+            <label class="field">
+              <span>Data de aplicação *</span>
+              <input id="fData-vermifugacoes" type="date" />
+            </label>
+            <label class="field">
+              <span>Próxima aplicação</span>
+              <input id="fProxima-vermifugacoes" type="date" />
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Dose</span>
+              <input id="fDose-vermifugacoes" placeholder="Ex.: 5 ml" />
+            </label>
+            <label class="field">
+              <span>Via de administração</span>
+              <select id="fVia-vermifugacoes">
+                <option value="">Selecionar…</option>
+                <option value="Oral">Oral</option>
+                <option value="Subcutânea">Subcutânea</option>
+                <option value="Intramuscular">Intramuscular</option>
+                <option value="Pour-on">Pour-on (tópico)</option>
+              </select>
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Aplicador</span>
+              <input id="fAplicador-vermifugacoes" placeholder="Ex.: Dr. João" />
+            </label>
+            <label class="field">
+              <span>Observações</span>
+              <input id="fObs-vermifugacoes" placeholder="Opcional" />
+            </label>
+          </div>
+          <div class="hv-form__actions">
+            <button class="btn btn--primary" id="btn-registrar-vermifugacoes">+ Registrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAINEL: TRATAMENTOS ════════════════════════════════════════════════ -->
+    <div class="hv-panel" id="tab-tratamentos">
+      <div class="hv-panel-header">
+        <h2>💊 Tratamentos</h2>
+      </div>
+      <div id="lista-tratamentos">
+        <div class="hv-vazio">
+          <div class="hv-vazio__icon">💊</div>
+          <p>Nenhum tratamento registrado.</p>
+        </div>
+      </div>
+      <div class="hv-form-section">
+        <p class="hv-form-section__title">+ Registrar tratamento</p>
+        <div class="hv-form">
+          <div class="form__grid">
+            <label class="field">
+              <span>Tipo de tratamento *</span>
+              <input id="fTratamento-tratamentos" placeholder="Ex.: Antibioticoterapia, Sutura…" />
+            </label>
+            <label class="field">
+              <span>Medicamento(s)</span>
+              <input id="fMed-tratamentos" placeholder="Ex.: Penicilina, Dipirona…" />
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Data de início *</span>
+              <input id="fDataInicio-tratamentos" type="date" />
+            </label>
+            <label class="field">
+              <span>Data de encerramento</span>
+              <input id="fDataFim-tratamentos" type="date" />
+            </label>
+          </div>
+          <div class="form__grid">
+            <label class="field">
+              <span>Dose / Frequência</span>
+              <input id="fDoseFreq-tratamentos" placeholder="Ex.: 2 ml a cada 12h" />
+            </label>
+            <label class="field">
+              <span>Veterinário responsável</span>
+              <input id="fVet-tratamentos" placeholder="Ex.: Dra. Ana Lima" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Observações</span>
+            <input id="fObs-tratamentos" placeholder="Opcional" />
+          </label>
+          <div class="hv-form__actions">
+            <button class="btn btn--primary" id="btn-registrar-tratamentos">+ Registrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="assets/app/scripts/historico-veterinario.js"></script>
+</body>
+</html>

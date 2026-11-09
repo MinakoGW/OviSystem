@@ -1,0 +1,25 @@
+.auth-body { background: linear-gradient(180deg, var(--bg), #efece2); min-height: 100%; }
+.auth {
+  max-width: 460px; margin: 0 auto; padding: 48px 20px;
+}
+.auth__card {
+  background: var(--surface); padding: 32px;
+  border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line);
+}
+.auth__card h1 { margin-bottom: 6px; font-size: 1.8rem; }
+.auth__sub { margin-bottom: 22px; }
+.auth__footer { margin-top: 18px; text-align: center; font-size: .95rem; color: var(--ink-soft); }
+@media (max-width: 480px) {
+  .auth__card { padding: 24px 20px; }
+}
+/* ── Corrige grid de 2 colunas dentro do card estreito ────────────────────── */
+.auth__card .form__grid {
+  grid-template-columns: 1fr 1fr;
+  min-width: 0;
+}
+.auth__card .form__grid .field input {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}

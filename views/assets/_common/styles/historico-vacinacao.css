@@ -1,0 +1,131 @@
+/* ── Cabeçalho da ovelha ───────────────────────────────────────────────────── */
+.hv-header { margin-bottom: 32px; }
+
+.hv-header__back { margin-bottom: 16px; }
+
+.hv-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.hv-hero__avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  display: grid; place-items: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.hv-hero__codigo { font-size: 1.6rem; font-weight: 800; margin: 0; }
+.hv-hero__sub    { color: var(--muted); margin: 2px 0 0; }
+
+/* ── Ficha de dados ────────────────────────────────────────────────────────── */
+.hv-ficha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+}
+.hv-ficha__item  { display: flex; flex-direction: column; gap: 2px; }
+.hv-ficha__label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.hv-ficha__value { font-weight: 600; font-size: .95rem; }
+
+/* ── Seção de vacinas ──────────────────────────────────────────────────────── */
+.hv-vacinas {
+  margin-bottom: 36px;
+}
+.hv-vacinas__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.hv-vacinas__header h2 { margin: 0; }
+.hv-count {
+  font-size: .8rem;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-radius: 99px;
+  padding: 2px 10px;
+  font-weight: 600;
+}
+.hv-vazio {
+  padding: 24px;
+  background: var(--surface);
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+/* ── Tabela ────────────────────────────────────────────────────────────────── */
+.hv-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  font-size: .9rem;
+}
+.hv-tabela thead {
+  background: var(--primary-soft);
+}
+.hv-tabela th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--primary);
+}
+.hv-tabela td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+  vertical-align: middle;
+}
+.hv-tabela tbody tr:hover { background: var(--bg); }
+
+/* ── Formulário de registro ────────────────────────────────────────────────── */
+.hv-form-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.hv-form-section h2 { margin: 0 0 18px; }
+.hv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.hv-form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Botão pequeno ─────────────────────────────────────────────────────────── */
+.btn--sm {
+  padding: 4px 10px;
+  font-size: .8rem;
+}
+
+/* ── Badge prenha (reutilizado do lotes.css mas isolado aqui também) ────────── */
+.badge--prenha {
+  font-size: .78rem;
+  background: #fdf3d0;
+  color: #a0640a;
+  border-radius: 99px;
+  padding: 2px 10px;
+}
+
+/* ── Responsivo ────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hv-tabela { font-size: .8rem; }
+  .hv-tabela th, .hv-tabela td { padding: 8px 10px; }
+  .hv-ficha { gap: 10px 16px; }
+}
