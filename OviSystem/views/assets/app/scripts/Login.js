@@ -1,4 +1,4 @@
-import Users from "./Users.js";
+import Users from "../../_common/classes/Users.js";
 
 const users = new Users();
 
@@ -6,10 +6,23 @@ const form = document.querySelector(".form");
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const formData = new FormData(form);
-    const data = {
-        email: formData.get("email"),
-        password: formData.get("password")
+    const response = await users.loginFromForm(form);
+
+    console.log(response.data.id)
+    if(response.code == 200)
+    {
+        const token = response.data.token; 
+        const id = response.data.id;
+        localStorage.setItem("token", token);
+        localStorage.setItem("usersId", id); 
+        console.log("Token salvo:", token);
+        location.href = "lotes.html"
     }
-    console.log(data);
+    else
+    {
+        console.log("ERROR: " + response.message)
+    }
 })
+
+
+

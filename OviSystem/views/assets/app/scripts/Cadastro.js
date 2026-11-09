@@ -1,4 +1,4 @@
-import Users from "./Users.js";
+import Users from "../../_common/classes/Users.js";
 
 const users = new Users();
 
@@ -16,8 +16,9 @@ form.addEventListener("submit", async (event) => {
         password: formData.get("password")
     };
 
+    console.log(formData.get("password2"));
     if(data.password !== formData.get("password2")){
-        console.error(error)
+        console.error("as senhas não coincidem")
         return
     }
 
@@ -30,7 +31,7 @@ form.addEventListener("submit", async (event) => {
         window.location.href = "login.html";
     
     } catch (error) {
-        console.error(error);
+        console.error("ERROR");
     }
 
 });
