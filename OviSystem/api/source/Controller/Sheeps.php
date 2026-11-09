@@ -1,7 +1,5 @@
 <?php
 
-<?php
-
 namespace Source\Controller;
 
 use Source\Controller\Api;

@@ -9,6 +9,10 @@ class Flocks extends Api
 {
     public function insert (array $data): void
     {
+
+        $json = json_decode(file_get_contents("php://input"), true);
+        $data = array_merge($data, $json ?? []);
+
         if(!$this->authToken (2)){
             $this->call(
                 401,
@@ -124,7 +128,7 @@ class Flocks extends Api
         }
 
         $flock = new Flock();
-        $this->call(200,"success","Lista de lotes","success")->back($flock->selectAll());
+        $this->call(200,"success","Lista de lotes","success")->back($flock->selectAll(["active = 1"]));
     }
 
     public function listById(array $data): void
@@ -168,5 +172,46 @@ class Flocks extends Api
         ];
 
         $this->call(200,"success","Lote encontrado","success")->back($response);
-    }    
+    }
+    
+    public function delete(array $data): void
+    {
+        if(!$this->authToken (2)){
+            $this->call(
+                401,
+                "unauthorized",
+                "Usuário não está autenticado (sem token ou token inválido).",
+                "error")->back();
+            return;
+        }
+
+        if (!isset($data["flockId"]) || !filter_var($data["flockId"], FILTER_VALIDATE_INT)) {
+            $this->call(
+                400,
+                "bad_request",
+                "ID inválido",
+                "error"
+            )->back();
+            return;
+        }
+
+        $flock = new Flock();
+
+        if (!$flock->softDeleteById((int) $data["flockId"])) {
+            $this->call(
+                404,
+                "not_found",
+                $flock->getErrorMessage(),
+                "error"
+            )->back();
+            return;
+        }
+
+        $this->call(
+            200,
+            "success",
+            "Lote desativado com sucesso",
+            "success"
+        )->back();
+    }
 }
