@@ -49,18 +49,22 @@ class Faqs extends Api
         $this->call(200,"success","FAQ encontrada","success")->back($response);
     }
 
-    public function insert (array $data): void
+    public function listByCategory(array $data): void
     {
-
-        if(!$this->authToken (1)){
-            $this->call(
-                401,
-                "unauthorized",
-                "Administrador não está autenticado (sem token ou token inválido).",
-                "error")->back();
+        if (!isset($data["categoryId"]) || empty($data["categoryId"]) || !filter_var($data["categoryId"], FILTER_VALIDATE_INT)) {
+            $this->call(400, "bad_request", "ID da categoria é obrigatório e deve ser um número inteiro", "error")->back();
             return;
         }
 
+        $faq = new Faq();
+        $categoryId = (int)$data["categoryId"];
+
+        $this->call(200, "success", "Lista de FAQs por categoria", "success")
+            ->back($faq->selectAll(["active = 1", "faqs_categories_id = {$categoryId}"]));
+    }
+
+    public function insert (array $data): void
+    {
         if(!$this->validate($data)){
             $this->call(
                 400,
@@ -98,15 +102,6 @@ class Faqs extends Api
     {
        $json = json_decode(file_get_contents("php://input"), true);
        $data = array_merge($data, $json ?? []);
-
-        if(!$this->authToken (1)){
-            $this->call(
-                401,
-                "unauthorized",
-                "Usuário não está autenticado (sem token ou token inválido).",
-                "error")->back();
-            return;
-        }
 
         if(!filter_var($data["faqId"], FILTER_VALIDATE_INT)) {
             $this->call(
@@ -151,7 +146,15 @@ class Faqs extends Api
         $this->call(200,"success","FAQ atualizada com sucesso","success")->back($response);
     }
 
-    
+    public function validate (array $data): bool
+    {
+        if(!isset($data["faqs_category_id"]) || !isset($data["question"]) || !isset($data["answer"]) ||
+            empty($data["faqs_category_id"]) || empty($data["question"]) || empty($data["answer"]) ||
+           !filter_var($data["faqs_category_id"], FILTER_VALIDATE_INT)) {
+            return false;
+        }
+        return true;
+    }
 
     public function delete(array $data): void
     {
@@ -159,14 +162,6 @@ class Faqs extends Api
         $json = json_decode(file_get_contents("php://input"), true);
         $data = array_merge($data, $json ?? []);
 
-        if(!$this->authToken (1)){
-            $this->call(
-                401,
-                "unauthorized",
-                "Usuário não está autenticado (sem token ou token inválido).",
-                "error")->back();
-            return;
-        }
     
         if (!isset($data["faqId"]) || !filter_var($data["faqId"], FILTER_VALIDATE_INT)) {
             $this->call(
@@ -198,14 +193,4 @@ class Faqs extends Api
             "success"
         )->back();
 }
-
-    public function validate (array $data): bool
-    {
-        if(!isset($data["faqs_category_id"]) || !isset($data["question"]) || !isset($data["answer"]) ||
-            empty($data["faqs_category_id"]) || empty($data["question"]) || empty($data["answer"]) ||
-           !filter_var($data["faqs_category_id"], FILTER_VALIDATE_INT)) {
-            return false;
-        }
-        return true;
-    }
 }

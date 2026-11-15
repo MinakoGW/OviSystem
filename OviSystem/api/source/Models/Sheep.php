@@ -14,7 +14,7 @@ class Sheep extends Model
     private ?string $eartag;
     private ?int $sex; //não esquecer de trocar de varchar para tinyInt o sex
     private ?int $pregnancy;
-    private ?string $birthDate;
+    private ?string $birthDate; // coluna do banco: birthdate (sem underscore)
     private ?string $breed;
     private ?int $active;
 
@@ -28,12 +28,13 @@ class Sheep extends Model
         $this->eartag = $eartag;
         $this->sex = $sex;
         $this->pregnancy = $pregnancy;
+        $this->birthDate = $birthDate;
         $this->breed = $breed;
         $this->active = $active;
 
         $this->table = "sheeps";
         $this->primaryKey = "id";
-        $this->fillable = ["flocksId", "motherId", "fatherId", "number", "eartag", "sex", "pregnancy", "breed", "active"];
+        $this->fillable = ["flocksId", "motherId", "fatherId", "number", "eartag", "sex", "pregnancy", "birthDate", "breed", "active"];
     }
 
     public function getId(): ?int
@@ -116,6 +117,16 @@ class Sheep extends Model
         $this->pregnancy = $pregnancy;
     }
 
+    public function getBirthDate(): ?string
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate($birthDate): void
+    {
+        $this->birthDate = $birthDate;
+    }
+
     public function getBreed(): ?string
     {
         return $this->breed;
@@ -134,5 +145,21 @@ class Sheep extends Model
     public function setActive($active): void
     {
         $this->active = $active;
+    }
+
+    /**
+     * O banco utiliza a coluna "birthdate" (sem underscore), enquanto
+     * o padrão camelCase -> snake_case do Model gera "birth_date".
+     */
+    protected function extractPayloadFromGetters(): array
+    {
+        $payload = parent::extractPayloadFromGetters();
+
+        if (array_key_exists("birth_date", $payload)) {
+            $payload["birthdate"] = $payload["birth_date"];
+            unset($payload["birth_date"]);
+        }
+
+        return $payload;
     }
 }

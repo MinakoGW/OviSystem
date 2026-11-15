@@ -53,14 +53,4 @@ class FaqCategory extends Model
         $this->active = $active;
     }
 
-   // public function listById (int $id): object | false
-   // {
-   //     $query = "SELECT * FROM faqs WHERE id = :id";
-   //     $stmt = Connect::getInstance()->prepare($query);
-   //     $stmt->bindParam(":id", $id);
-   //     $stmt->execute();
-   //     return $stmt->fetch();
-   // }
-
-
 }

@@ -33,12 +33,15 @@ $route->post("/login","Users:auth"); // login de usuário comum
 $route->put("/update","Users:update"); // update de usuário comum
 $route->post("/register-admin","Users:registerAdmin"); // Registrar usuário admin NÃO IMPLEMENTADO
 $route->post("/login-admin","Users:authAdmin"); // login de usuário admin
-$route->put("/update-admin","Users:updateAdmin"); // update de usuário admin
+$route->put("/update-admin","Users:updateAdmin");
+$route->post("/photo","Users:uploadPhoto");
+$route->get("/me","Users:me"); // dados do usuário autenticado
 $route->group(null);
 
 $route->group("/faqs");
 $route->get("/list", "faqs\Faqs:listAll");
 $route->get("/list/{faqId}", "faqs\Faqs:listById");
+$route->get("/category/{categoryId}","faqs\Faqs:listByCategory");
 $route->post("/", "faqs\Faqs:insert");
 $route->put("/{faqId}", "faqs\Faqs:update");
 $route->delete("/delete/{faqId}", "faqs\Faqs:delete");
@@ -57,6 +60,7 @@ $route->post("/", "Flocks:insert");
 $route->get("/", "Flocks:listAll");
 $route->get("/{flockId}", "Flocks:listById");
 $route->put("/{flockId}", "Flocks:update");
+$route->delete("/delete/{flockId}", "Flocks:delete");
 $route->group(null);
 
 $route->group("/Sheeps");
@@ -64,6 +68,10 @@ $route->post("/", "Sheeps:insert");
 $route->get("/", "Sheeps:listAll");
 $route->get("/{sheepId}", "Sheeps:listById");
 $route->put("/{sheepId}", "Sheeps:update");
+$route->post("/{sheepId}/images", "SheepImages:insert");
+$route->get("/{sheepId}/images", "SheepImages:listBySheep");
+$route->delete("/{sheepId}/images/{imageId}", "SheepImages:delete");
+$route->get("/flock/{flockId}", "Sheeps:listByFlock");
 $route->group(null);
 
 $route->group("/Vaccines");

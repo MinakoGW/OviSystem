@@ -9,6 +9,10 @@ class Flocks extends Api
 {
     public function insert (array $data): void
     {
+
+        $json = json_decode(file_get_contents("php://input"), true);
+        $data = array_merge($data, $json ?? []);
+
         if(!$this->authToken (2)){
             $this->call(
                 401,
@@ -30,7 +34,7 @@ class Flocks extends Api
 
         $flock = new Flock(
             null,
-            $data["users_id"],
+            (int) $this->userAuthId, // o dono é sempre o usuário do token
             $data["name"]
         );
 
@@ -57,10 +61,11 @@ class Flocks extends Api
         return true;
     }
 
+    // PUT /Flocks/{flockId} — JSON: { name }. Só o dono do lote pode renomear.
     public function update (array $data): void
     {
-       $json = json_decode(file_get_contents("php://input"), true);
-       $data = array_merge($data, $json ?? []);
+        $json = json_decode(file_get_contents("php://input"), true);
+        $data = array_merge($data, is_array($json) ? $json : []);
 
         if(!$this->authToken (2)){
             $this->call(
@@ -71,45 +76,41 @@ class Flocks extends Api
             return;
         }
 
-        if(!filter_var($data["flockId"], FILTER_VALIDATE_INT)) {
-            $this->call(
-                400,
-                "bad_request",
-                "ID do usuário é obrigatório e deve ser um número inteiro",
-                "error"
-            )->back();
+        $flockId = filter_var($data["flockId"] ?? null, FILTER_VALIDATE_INT);
+        if(!$flockId) {
+            $this->call(400, "bad_request", "ID do lote é obrigatório e deve ser um número inteiro", "error")->back();
             return;
         }
 
-        if(!$this->validate($data)){
-            $this->call(
-                400,
-                "bad_request",
-                "O campo Name é obrigatório...",
-                "error"
-            )->back();
+        $name = trim((string) ($data["name"] ?? ""));
+        if($name === "" || mb_strlen($name) > 100) {
+            $this->call(400, "bad_request", "O nome do lote é obrigatório e deve ter no máximo 100 caracteres.", "error")->back();
             return;
         }
 
-        $flock = new Flock(
-            null,
-            $data["users_id"],
-            $data["name"]
-        );
-      
-
-        if(!$flock->updateById($data["flockId"])){
-            $this->call(500, "internal_server_error", $flock->getErrorMessage(), "error")->back();
+        // O lote precisa existir, estar ativo e ser do usuário autenticado
+        $current = new Flock();
+        if(!$current->selectById($flockId)
+            || (int) $current->getActive() === 0
+            || (int) $current->getUsersId() !== (int) $this->userAuthId) {
+            $this->call(404, "not_found", "Lote não encontrado.", "error")->back();
             return;
         }
-        $response = [
-            "id" => $flock->getId(),
-            "users_id" => $flock->getUsersId(),
-            "name" => $flock->getName(),
-            "active" => $flock->getActive()
-        ];
 
-        $this->call(200,"success","Lote atualizado com sucesso","success")->back($response);
+        // Só o nome muda (usersId e active nulos são ignorados pelo updateById)
+        $flock = new Flock(null, null, $name, null);
+
+        if(!$flock->updateById($flockId) && $flock->getErrorMessage() !== "Registro não encontrado ou sem alterações."){
+            $this->call(500, "internal_server_error", "Não foi possível atualizar o lote.", "error")->back();
+            return;
+        }
+
+        $this->call(200,"success","Lote atualizado com sucesso","success")->back([
+            "id" => $flockId,
+            "users_id" => (int) $current->getUsersId(),
+            "name" => $name,
+            "active" => 1
+        ]);
     }
 
     public function listAll (array $data): void
@@ -124,7 +125,7 @@ class Flocks extends Api
         }
 
         $flock = new Flock();
-        $this->call(200,"success","Lista de lotes","success")->back($flock->selectAll());
+        $this->call(200,"success","Lista de lotes","success")->back($flock->selectAll(["active = 1", "users_id = " . (int) $this->userAuthId]));
     }
 
     public function listById(array $data): void
@@ -150,7 +151,7 @@ class Flocks extends Api
         }
 
         $flock = new Flock();
-        if(!$flock->selectById($data["flockId"])) {
+        if(!$flock->selectById($data["flockId"]) || (int) $flock->getUsersId() !== (int) $this->userAuthId) {
             $this->call(
                 404,
                 "not_found",
@@ -168,5 +169,46 @@ class Flocks extends Api
         ];
 
         $this->call(200,"success","Lote encontrado","success")->back($response);
-    }    
+    }
+    
+    public function delete(array $data): void
+    {
+        if(!$this->authToken (2)){
+            $this->call(
+                401,
+                "unauthorized",
+                "Usuário não está autenticado (sem token ou token inválido).",
+                "error")->back();
+            return;
+        }
+
+        if (!isset($data["flockId"]) || !filter_var($data["flockId"], FILTER_VALIDATE_INT)) {
+            $this->call(
+                400,
+                "bad_request",
+                "ID inválido",
+                "error"
+            )->back();
+            return;
+        }
+
+        $flock = new Flock();
+
+        if (!$flock->softDeleteById((int) $data["flockId"])) {
+            $this->call(
+                404,
+                "not_found",
+                $flock->getErrorMessage(),
+                "error"
+            )->back();
+            return;
+        }
+
+        $this->call(
+            200,
+            "success",
+            "Lote desativado com sucesso",
+            "success"
+        )->back();
+    }
 }

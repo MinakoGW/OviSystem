@@ -3,6 +3,7 @@
 namespace Source\Controller;
 
 use Source\Models\User;
+use Source\Support\Upload;
 
 class Users extends Api
 {
@@ -55,6 +56,10 @@ class Users extends Api
 
     public function auth (array $data): void
     {
+
+        $json = json_decode(file_get_contents("php://input"), true);
+        $data = array_merge($data, $json ?? []);
+
         if(!isset($data['email'], $data['password']) ||
             empty($data['email']) || empty($data['password']) ||
             !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
@@ -127,21 +132,81 @@ class Users extends Api
             "success")->back($response);
     }
 
-    public function update (array $data): void
+    // GET /users/me — dados do usuário autenticado (identidade vem do token)
+    public function me (array $data): void
     {
         if(!$this->authToken (2)){
-            $this->call(
-                401,
-                "unauthorized",
-                "Usuário não está autenticado (sem token ou token inválido).",
-                "error")->back();
+            $this->call(401, "unauthorized", "Usuário não está autenticado (sem token ou token inválido).", "error")->back();
             return;
         }
-        // fazer o update do usuário agora autenticado preciso do id
 
-        var_dump($this->userAuthId);
+        $user = new User();
+        if(!$user->selectById((int) $this->userAuthId)){
+            $this->call(404, "not_found", "Perfil não encontrado.", "error")->back();
+            return;
+        }
 
-        $this->call(200,"success","Usuário atualizado com sucesso","success")->back();
+        $this->call(200, "success", "Perfil encontrado", "success")->back([
+            "id" => $user->getId(),
+            "name" => $user->getName(),
+            "email" => $user->getEmail(),
+            "farm" => $user->getFarm(),
+            "photo" => $this->photoUrl($user->getPhoto())
+        ]);
+    }
+
+    // PUT /users/update — JSON: name, email, farm e/ou current_password + new_password
+    public function update (array $data): void
+    {
+        $json = json_decode(file_get_contents("php://input"), true);
+        $data = array_merge($data, is_array($json) ? $json : []);
+
+        if(!$this->authToken (2)){
+            $this->call(401, "unauthorized", "Usuário não está autenticado (sem token ou token inválido).", "error")->back();
+            return;
+        }
+
+        $current = new User();
+        if(!$current->selectById((int) $this->userAuthId)){
+            $this->call(404, "not_found", "Perfil não encontrado.", "error")->back();
+            return;
+        }
+
+        // Campos não enviados mantêm o valor atual
+        $name = trim((string) ($data["name"] ?? $current->getName()));
+        $email = trim((string) ($data["email"] ?? $current->getEmail()));
+        $farm = array_key_exists("farm", $data) ? trim((string) $data["farm"]) : $current->getFarm();
+
+        if($name === "" || mb_strlen($name) > 150){
+            $this->call(400, "bad_request", "Informe um nome válido.", "error")->back();
+            return;
+        }
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $this->call(400, "bad_request", "Informe um e-mail válido.", "error")->back();
+            return;
+        }
+        if($farm !== null && mb_strlen($farm) > 150){
+            $this->call(400, "bad_request", "O nome da fazenda deve ter no máximo 150 caracteres.", "error")->back();
+            return;
+        }
+
+        $currentPassword = isset($data["current_password"]) && $data["current_password"] !== "" ? (string) $data["current_password"] : null;
+        $newPassword = isset($data["new_password"]) && $data["new_password"] !== "" ? (string) $data["new_password"] : null;
+
+        $user = new User();
+        if(!$user->updateProfile((int) $this->userAuthId, $name, $email, $currentPassword, $newPassword, $farm)){
+            $this->call(400, "bad_request", $user->getErrorMessage() ?? "Não foi possível atualizar o perfil.", "error")->back();
+            return;
+        }
+
+        // O e-mail faz parte do token: devolve um token novo
+        $this->call(200,"success","Usuário atualizado com sucesso","success")->back([
+            "id" => $user->getId(),
+            "name" => $user->getName(),
+            "email" => $user->getEmail(),
+            "farm" => $user->getFarm(),
+            "token" => $user->getToken()
+        ]);
     }
 
     public function updateAdmin (array $data): void
@@ -164,6 +229,66 @@ class Users extends Api
 
     }
 
+    public function uploadPhoto (array $data): void
+    {
+        if (!$this->authToken(2)) {
+            $this->call(401, "unauthorized", "Usuário não está autenticado (sem token ou token inválido).", "error")->back();
+            return;
+        }
+
+        if (!isset($_FILES["photo"]) || !is_array($_FILES["photo"])) {
+            $this->call(400, "bad_request", "Selecione uma imagem para enviar.", "error")->back();
+            return;
+        }
+
+        $user = new User();
+        if (!$user->selectById($this->userAuthId)) {
+            $this->call(404, "not_found", "Perfil não encontrado.", "error")->back();
+            return;
+        }
+        $oldPhoto = $user->getPhoto();
+
+        $uploadDirectory = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "users";
+        $uploader = new Upload($uploadDirectory);
+        try {
+            $filename = $uploader->image($_FILES["photo"]);
+        } catch (\RuntimeException $exception) {
+            $this->call(400, "bad_request", $exception->getMessage(), "error")->back();
+            return;
+        }
+
+        $photoPath = "uploads/users/" . $filename;
+        $photoUrl = $this->photoUrl($photoPath);
+        if (!$user->updatePhoto($this->userAuthId, $photoPath)) {
+            $savedPath = $uploadDirectory . DIRECTORY_SEPARATOR . $filename;
+            if (is_file($savedPath) && !unlink($savedPath)) {
+                error_log("Não foi possível remover a foto enviada após falha ao atualizar o perfil.");
+            }
+            $this->call(500, "internal_server_error", $user->getErrorMessage() ?? "Não foi possível atualizar a foto.", "error")->back();
+            return;
+        }
+
+        $this->deletePreviousPhoto($oldPhoto, $uploadDirectory);
+
+        $this->call(200, "success", "Foto atualizada com sucesso.", "success")->back([
+            "photo" => $photoUrl,
+        ]);
+    }
+
+    private function photoUrl(?string $photoPath): ?string
+    {
+        if ($photoPath === null || trim($photoPath) === "") {
+            return null;
+        }
+
+        if (filter_var($photoPath, FILTER_VALIDATE_URL)) {
+            return $photoPath;
+        }
+
+        return url(ltrim($photoPath, "/"));
+    }
+
+
     // Valida somente Nome e Email, mas pode ser alterada para validar mais campos
     private function validateNameEmail(array $data): bool
     {
@@ -174,4 +299,17 @@ class Users extends Api
         }
         return true;
     }
+
+    private function deletePreviousPhoto(?string $oldPhoto, string $uploadDirectory): void
+{
+    // Só remove arquivos gerenciados pela aplicação
+    if ($oldPhoto === null || strpos($oldPhoto, "uploads/users/") !== 0) {
+        return;
+    }
+
+    $file = $uploadDirectory . DIRECTORY_SEPARATOR . basename($oldPhoto);
+    if (is_file($file) && !unlink($file)) {
+        error_log("Não foi possível remover a foto anterior.");
+    }
+}
 }
