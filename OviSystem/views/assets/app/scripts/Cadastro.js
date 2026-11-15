@@ -1,6 +1,8 @@
-import Users from "./Users.js";
+import Users from "../../_common/classes/Users.js";
+import { criarToast } from "../../_common/Toast.js";
 
 const users = new Users();
+const toast = criarToast();
 
 const form = document.querySelector(".form");
 
@@ -16,8 +18,9 @@ form.addEventListener("submit", async (event) => {
         password: formData.get("password")
     };
 
+    console.log(formData.get("password2"));
     if(data.password !== formData.get("password2")){
-        console.error(error)
+        toast.show("error", "As senhas não coincidem.");
         return
     }
 
@@ -26,11 +29,11 @@ form.addEventListener("submit", async (event) => {
         const response = await users.register(data);
 
         console.log(response);
-
+        toast.show("success", "Cadastro realizado com sucesso!");
         window.location.href = "login.html";
     
     } catch (error) {
-        console.error(error);
+        console.error("ERROR");
     }
 
 });

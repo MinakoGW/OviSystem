@@ -1,4 +1,4 @@
-import HttpClientBase from "./HttpClientBase.js";
+import HttpClientBase from "../HttpClientBase.js";
 
 export default class Users extends HttpClientBase {
     async login(email, password) {

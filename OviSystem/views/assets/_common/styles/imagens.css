@@ -1,0 +1,242 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   IMAGENS — foto de perfil e galeria da ovelha
+   Linke depois de perfil.css e lotes.css (precisa sobrescrever .modal-card).
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Foto de perfil: imagem dentro dos círculos ────────────────────────────── */
+.perfil-foto__preview,
+.perfil-resumo__avatar { overflow: hidden; }
+
+.perfil-foto__preview img,
+.perfil-resumo__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Mensagens de status (perfil e galeria) ────────────────────────────────── */
+.perfil-form__hint.is-erro,
+.galeria-status.is-erro { color: var(--danger); font-weight: 600; }
+
+.perfil-form__hint.is-ok,
+.galeria-status.is-ok { color: var(--primary-dark); font-weight: 600; }
+
+.perfil-form__actions .btn:disabled,
+.galeria-upload .btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ── Modal da galeria ──────────────────────────────────────────────────────── */
+.galeria-modal { max-width: 640px; }
+
+.galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.galeria-vazio {
+  grid-column: 1 / -1;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--bg);
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.galeria-item {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.galeria-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.galeria-item__remover {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: .78rem;
+  font-weight: 600;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.galeria-item__remover:hover,
+.galeria-item__remover:focus-visible,
+.galeria-item__remover[data-confirmar] {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.galeria-item__remover:disabled { opacity: .6; cursor: wait; }
+
+/* ── Envio de novas imagens ────────────────────────────────────────────────── */
+.galeria-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.galeria-upload .perfil-file {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: .88rem;
+}
+
+.galeria-upload .perfil-file::file-selector-button {
+  margin-right: 12px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.galeria-hint,
+.galeria-status { margin: 0; font-size: .82rem; line-height: 1.5; }
+.galeria-hint { color: var(--muted); }
+.galeria-status:empty { display: none; }
+
+.galeria-previas { display: flex; flex-wrap: wrap; gap: 8px; }
+.galeria-previas:empty { display: none; }
+
+.galeria-previa {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.galeria-previa img { width: 100%; height: 100%; object-fit: cover; }
+
+.galeria-previa__remover {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .6);
+  color: #fff;
+  font-size: .7rem;
+  line-height: 1;
+}
+
+.galeria-previa__remover:hover { background: var(--danger); }
+
+/* ── Cards de ovelha clicáveis ─────────────────────────────────────────────── */
+.ovelha-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ── Carrossel da ovelha ───────────────────────────────────────────────────── */
+.carrossel { display: flex; flex-direction: column; gap: 10px; }
+
+.carrossel__palco {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.carrossel__figura { margin: 0; width: 100%; text-align: center; }
+
+.carrossel__figura img {
+  display: block;
+  width: 100%;
+  max-height: 340px;
+  object-fit: contain;
+  background: #1f2a24;
+}
+
+.carrossel__figura figcaption {
+  padding: 6px 12px;
+  font-size: .85rem;
+  color: var(--ink-soft);
+}
+.carrossel__figura figcaption:empty { display: none; }
+
+.carrossel__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .9);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+  transition: background .15s, color .15s;
+}
+.carrossel__nav--prev { left: 8px; }
+.carrossel__nav--next { right: 8px; }
+.carrossel__nav:hover,
+.carrossel__nav:focus-visible { background: var(--primary); color: #fff; }
+
+.carrossel__barra { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.carrossel__contador { font-size: .88rem; color: var(--muted); font-weight: 600; }
+
+.carrossel__remover {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: .85rem;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.carrossel__remover:hover,
+.carrossel__remover:focus-visible,
+.carrossel__remover[data-confirmar] { background: var(--danger); border-color: var(--danger); color: #fff; }
+.carrossel__remover:disabled { opacity: .6; cursor: wait; }
+
+.carrossel__miniaturas { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+
+.carrossel__mini {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  opacity: .65;
+  cursor: pointer;
+  transition: opacity .15s, border-color .15s;
+}
+.carrossel__mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.carrossel__mini:hover { opacity: 1; }
+.carrossel__mini.is-ativa { border-color: var(--primary); opacity: 1; }
